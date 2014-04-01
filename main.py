@@ -105,8 +105,6 @@ def readme(root):
     f.close()
 
 
-
-
 class Minify():
     def __init__(self, js_list, css_list, yui_path):
         self.js_list = js_list
