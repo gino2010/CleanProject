@@ -1,5 +1,7 @@
 Clean Project for python and web server application
 =============
+Version: 1.0 beta
+
 Function:
 
 1. Remove .py keep .pyc
