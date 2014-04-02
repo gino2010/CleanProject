@@ -22,7 +22,7 @@ def main(args):
         jar_path = yuicompressor.get_jar_filename()
     except ImportError:
         jar_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'yuicompressor-2.4.8.jar')
-        if not os.path.isfile(path):
+        if not os.path.isfile(jar_path):
             print('You need yuicompressor jar or python lib.')
             exit()
     if len(args) == 0:
