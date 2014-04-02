@@ -8,7 +8,7 @@ import datetime
 __author__ = 'Gino'
 
 # setting
-IGNORE_DIRECTORY = ('.idea', '.git', 'deployment', '.gitignore')
+IGNORE_DIRECTORY = ('.idea', '.git', 'deployment', '.gitignore', 'main.py')
 KEEP_PYTHON_FILE = ['.py', '.pyc']
 IS_COMPRESS_JS = True
 IS_COMPRESS_CSS = True
