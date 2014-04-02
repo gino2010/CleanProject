@@ -30,8 +30,6 @@ def main(args):
         if answer.lower().startswith("y"):
             root = os.getcwd()
             deployment = os.path.join(root, 'deployment')
-            # shutil.copytree(root, deployment, ignore=shutil.ignore_patterns(*IGNORE_DIRECTORY))
-            # return deployment, jar_path
         else:
             exit()
     elif len(args) == 1:
