@@ -57,14 +57,19 @@ def main(args):
 
 
 # delete directory
+# not use any more because of using ignore in copytree
 def delete_directory(root):
     for d in IGNORE_DIRECTORY:
         try:
             full_path = os.path.join(root, d)
             shutil.rmtree(full_path)
             print("Directory: %s is removed" % full_path)
-        except WindowsError as e:
+        except shutil.Error as e:
             print("Directory: %s can't removed. Reason: %s" % (full_path, e.strerror))
+        except IOError as e:
+            print('IOError: %s' % e.strerror)
+        except OSError as e:
+            print('OSError: %s' % e.strerror)
 
 
 # delete python file and collect js and css files
@@ -81,7 +86,7 @@ def delete_py_and_collect_jc(root):
                     os.remove(full_path)
                     count += 1
                     print("File: %s is removed" % full_path)
-                except WindowsError as e:
+                except OSError as e:
                     print("File: %s can't removed. Reason: %s" % (full_path, e.strerror))
             if IS_COMPRESS_CSS and file_ext == '.css' and 'min' not in file_name:
                 css_collect.append(full_path)
@@ -127,7 +132,7 @@ class Minify():
                     if op.communicate()[0] != '':
                         print(op.communicate()[0])
                     print("File: %s is compressed." % temp)
-                except WindowsError as e:
+                except subprocess.CalledProcessError as e:
                     print("File: %s can't compressed. Reason: %s" % (temp, e.strerror))
         else:
             print('No JS file is compressed.')
@@ -150,7 +155,7 @@ class Minify():
                     if op.communicate()[0] != '':
                         print(op.communicate()[0])
                     print("File: %s is compressed." % temp)
-                except WindowsError as e:
+                except subprocess.CalledProcessError as e:
                     print("File: %s can't compressed. Reason: %s" % (temp, e.strerror))
         else:
             print('No CSS file is compressed.')
@@ -161,7 +166,6 @@ if __name__ == "__main__":
 
     # directory handle and collect files
     print('Start to remove %s files ...' % KEEP_PYTHON_FILE[0])
-    delete_directory(pwd)
     js, css = delete_py_and_collect_jc(pwd)
 
     #compress files

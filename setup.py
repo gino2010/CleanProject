@@ -8,5 +8,5 @@ setup(
     license='GPL',
     author='Gino',
     author_email='',
-    description=''
+    description='Clean web server application tool'
 )
