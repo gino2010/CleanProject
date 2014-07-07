@@ -1,4 +1,4 @@
-Clean Project for python and web server application
+Clean Project for python and web server application (Django)
 =============
 Version: 1.0
 
