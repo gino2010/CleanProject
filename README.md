@@ -5,12 +5,12 @@ Version: 1.0
 Function
 -------------
 Clean project for deployment
+
 1. Remove .py keep .pyc
 2. Compress js and css file depend on yuicompressor 2.4.8
-yuicompressor: https://github.com/yui/yuicompressor/releases
-You can put yuicompressor.jar in java classpath or with main.py in same diretory
+  * yuicompressor: https://github.com/yui/yuicompressor/releases
+  * You can put yuicompressor.jar in java classpath or with main.py in same diretory
 3. Output cleaned project files in 'deployment' directory
-
 
 Usage
 -------------
