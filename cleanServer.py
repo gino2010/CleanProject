@@ -8,13 +8,13 @@ import datetime
 __author__ = 'Gino'
 
 # setting
-IGNORE_DIRECTORY = ('.idea', '.git', 'deployment', '.gitignore', 'main.py')
+IGNORE_DIRECTORY = ('.idea', '.git', 'clean_deployment', '.gitignore', 'cleanServer.py')
 KEEP_PYTHON_FILE = ['.py', '.pyc']
 IS_COMPRESS_JS = True
 IS_COMPRESS_CSS = True
 
 
-#main function
+# main function
 def main(args):
     try:
         import yuicompressor
@@ -24,52 +24,36 @@ def main(args):
         jar_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'yuicompressor-2.4.8.jar')
         if not os.path.isfile(jar_path):
             print('You need yuicompressor jar or python lib.')
-            exit()
+            sys.exit()
     if len(args) == 0:
         answer = raw_input('Do you want to deal with current path?(Y/N):')
         if answer.lower().startswith("y"):
             root = os.getcwd()
-            deployment = os.path.join(root, 'deployment')
+            clean_deployment = os.path.join(root, 'clean_deployment')
         else:
-            exit()
+            sys.exit()
     elif len(args) == 1:
         if not os.path.isdir(args[0]):
             print('Please give a directory path.')
-            exit()
+            sys.exit()
         else:
             root = args[0]
-            deployment = os.path.join(args[0], 'deployment')
+            clean_deployment = os.path.join(args[0], 'clean_deployment')
     else:
         print("You can't give tow or more args.")
-        exit()
+        sys.exit()
 
-    if os.path.isdir(deployment):
-        answer = raw_input('Do you want to recreate deployment directory?(Y/N):')
+    if os.path.isdir(clean_deployment):
+        answer = raw_input('Do you want to recreate clean_deployment directory?(Y/N):')
         if answer.lower().startswith("y"):
-            print('Remove old deployment directory!')
-            shutil.rmtree(deployment)
+            print('Remove old clean_deployment directory!')
+            shutil.rmtree(clean_deployment)
         else:
-            exit()
-    print('Copy project and create deployment directory...')
-    shutil.copytree(root, deployment, ignore=shutil.ignore_patterns(*IGNORE_DIRECTORY))
+            sys.exit()
+    print('Copy project and create clean_deployment directory...')
+    shutil.copytree(root, clean_deployment, ignore=shutil.ignore_patterns(*IGNORE_DIRECTORY))
     print('finished copy.')
-    return deployment, jar_path
-
-
-# delete directory
-# not use any more because of using ignore in copytree
-def delete_directory(root):
-    for d in IGNORE_DIRECTORY:
-        try:
-            full_path = os.path.join(root, d)
-            shutil.rmtree(full_path)
-            print("Directory: %s is removed" % full_path)
-        except shutil.Error as e:
-            print("Directory: %s can't removed. Reason: %s" % (full_path, e.strerror))
-        except IOError as e:
-            print('IOError: %s' % e.strerror)
-        except OSError as e:
-            print('OSError: %s' % e.strerror)
+    return clean_deployment, jar_path
 
 
 # delete python file and collect js and css files
@@ -104,7 +88,7 @@ def readme(root):
     else:
         f = open(readme_file, 'w+')
 
-    f.write('\nThis deployment is created at {0:s}'.format(datetime.datetime.now().strftime("%Y.%m.%d.%H.%M.%S")))
+    f.write('\nThis clean_deployment is created at {0:s}'.format(datetime.datetime.now().strftime("%Y.%m.%d.%H.%M.%S")))
     f.close()
 
 
@@ -129,8 +113,9 @@ class Minify():
                                 '-o', temp]
                 try:
                     op = subprocess.Popen(command_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
-                    if op.communicate()[0] != '':
-                        print(op.communicate()[0])
+                    temp_str = op.communicate()[0]
+                    if temp_str != '':
+                        print(temp_str)
                     print("File: %s is compressed." % temp)
                 except subprocess.CalledProcessError as e:
                     print("File: %s can't compressed. Reason: %s" % (temp, e.strerror))
@@ -152,11 +137,12 @@ class Minify():
                                 '-o', temp]
                 try:
                     op = subprocess.Popen(command_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd)
-                    if op.communicate()[0] != '':
-                        print(op.communicate()[0])
+                    temp_str = op.communicate()[0]
+                    if temp_str != '':
+                        print(temp_str)
                     print("File: %s is compressed." % temp)
                 except subprocess.CalledProcessError as e:
-                    print("File: %s can't compressed. Reason: %s" % (temp, e.strerror))
+                    print("File: %s can't compressed. Reason: %s" % (temp, e.message))
         else:
             print('No CSS file is compressed.')
 
@@ -178,4 +164,4 @@ if __name__ == "__main__":
     #create log write into README
     readme(pwd)
     print('finished all')
-    exit()
+    sys.exit()
