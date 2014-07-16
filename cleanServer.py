@@ -65,7 +65,7 @@ def delete_py_and_collect_jc(root):
         for f in files:
             full_path = os.path.join(root, f)
             file_name, file_ext = os.path.splitext(f)
-            if file_ext == KEEP_PYTHON_FILE[0] and file_name + KEEP_PYTHON_FILE[1] in files:
+            if file_ext == KEEP_PYTHON_FILE[0] and file_name + KEEP_PYTHON_FILE[1] in files and file_name != 'wsgi':
                 try:
                     os.remove(full_path)
                     count += 1
