@@ -8,10 +8,11 @@ Clean Server
 Clean server project for deployment, like Django web server application project
 
 1. Remove .py keep .pyc, remove .idea and .git directory
-2. Compress js and css file yuicompressor
-  * yuicompressor: https://github.com/yui/yuicompressor/releases
-  * You can put yuicompressor.jar in java classpath or with main.py in same diretory
-3. Output cleaned project files in 'clean_deployment' directory
+2. Adds and removes AngularJS dependency injection annotations by [ng-annotate]
+3. Compress js and css file yuicompressor(choose one)
+  * You need to install youcompressor package by pip
+  * You can download [yuicompressor] put yuicompressor.jar in java classpath or with main.py in same diretory
+4. Output cleaned project files in 'clean_deployment' directory
 
 ### Usage:
 1. deal with current directory, in project root directory:
@@ -31,11 +32,10 @@ Clean hybrid mobile for build, like HTML5 + Angularjs hybrid mobile client appli
 Notice: only support android project now
 
 1. Remove .idea and .git directory
-2. Transform angular js files in www directory by ngmin to prepare to compress
-  * ngmin: https://github.com/btford/ngmin
-3. Compress js file by yuicompressor
-  * yuicompressor: https://github.com/yui/yuicompressor/releases
-  * You can put yuicompressor.jar in java classpath or with main.py in same diretory
+2. Transform angular js files in www directory by [ngmin] to prepare to compress
+3. Compress js file by yuicompressor(choose one)
+  * You need to install youcompressor package by pip
+  * You can download [yuicompressor] put yuicompressor.jar in java classpath or with main.py in same diretory
 4. Output cleaned project files in 'clean_mobile' directory
 
 ### Usage:
@@ -51,3 +51,7 @@ python cleanMobile.py /your/directory/
 License
 -------------
 GPL
+
+[ng-annotate]:https://github.com/olov/ng-annotate
+[yuicompressor]:https://github.com/yui/yuicompressor/releases
+[ngmin]:https://github.com/btford/ngmin

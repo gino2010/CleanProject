@@ -1,4 +1,7 @@
+#!/usr/bin/python
+
 import os
+import py_compile
 import shutil
 import sys
 import subprocess
@@ -8,14 +11,17 @@ import datetime
 __author__ = 'Gino'
 
 # setting
-IGNORE_DIRECTORY = ('.idea', '.git', 'clean_deployment', '.gitignore', 'cleanServer.py')
-KEEP_PYTHON_FILE = ['.py', '.pyc']
+IGNORE_DIRECTORY = ('.idea', '.git', '.gitignore', '.svn', '.DS_Store', 'clean_deployment', 'cleanServer.py', '*.log')
+COMPARE_PYTHON_FILE = ['.py', '.pyc']
+KEEP_PYTHON_FILE = ['wsgi']
+NG_DIRECTORY = ['static/js']
+IGNORE_JS = ['socket.io-1.2.1']
 IS_COMPRESS_JS = True
 IS_COMPRESS_CSS = True
 
 
-# main function
-def main(args):
+# copy project function
+def copy_project(args):
     try:
         import yuicompressor
 
@@ -56,6 +62,27 @@ def main(args):
     return clean_deployment, jar_path
 
 
+def ng_annotate(root):
+    for item in NG_DIRECTORY:
+        ngroot = os.path.join(root, item)
+        for ngroot, subdir, files in os.walk(ngroot):
+            for f in files:
+                full_path = os.path.join(ngroot, f)
+                file_name, file_ext = os.path.splitext(f)
+                if file_ext != '.js':
+                    continue
+                # ng-annotate file
+                command_min = ['ng-annotate', '-a', full_path, '-o', full_path]
+                try:
+                    op = subprocess.Popen(command_min, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                    temp_str = op.communicate()[0]
+                    if temp_str != '':
+                        print(temp_str)
+                    print("File: %s is added ng-annotation." % full_path)
+                except subprocess.CalledProcessError as e:
+                    print("File: %s can't be added ng-annotation. Reason: %s" % (full_path, e.message))
+
+
 # delete python file and collect js and css files
 def delete_py_and_collect_jc(root):
     css_collect = []
@@ -65,8 +92,14 @@ def delete_py_and_collect_jc(root):
         for f in files:
             full_path = os.path.join(root, f)
             file_name, file_ext = os.path.splitext(f)
-            if file_ext == KEEP_PYTHON_FILE[0] and file_name + KEEP_PYTHON_FILE[1] in files and file_name != 'wsgi':
+            if file_ext == COMPARE_PYTHON_FILE[1] and file_name + COMPARE_PYTHON_FILE[0] not in files:
+                print("Remove invalid pyc: %s" % full_path)
+                os.remove(full_path)
+
+            if file_ext == COMPARE_PYTHON_FILE[0] and file_name not in KEEP_PYTHON_FILE:
                 try:
+                    py_compile.compile(full_path)
+                    print("File: %s is compiled" % full_path)
                     os.remove(full_path)
                     count += 1
                     print("File: %s is removed" % full_path)
@@ -74,7 +107,7 @@ def delete_py_and_collect_jc(root):
                     print("File: %s can't removed. Reason: %s" % (full_path, e.strerror))
             if IS_COMPRESS_CSS and file_ext == '.css' and 'min' not in file_name:
                 css_collect.append(full_path)
-            if IS_COMPRESS_JS and file_ext == '.js' and 'min' not in file_name:
+            if IS_COMPRESS_JS and file_ext == '.js' and 'min' not in file_name and file_name not in IGNORE_JS:
                 js_collect.append(full_path)
     if not count:
         print('No py file is removed.')
@@ -98,7 +131,7 @@ class Minify():
         self.css_list = css_list
         self.yuicompressorpath = yui_path
 
-    #compress js
+    # compress js
     def compress_js(self):
         if len(self.js_list):
             for temp in self.js_list:
@@ -122,7 +155,7 @@ class Minify():
         else:
             print('No JS file is compressed.')
 
-    #compress css
+    # compress css
     def compress_css(self):
         if len(self.css_list):
             for temp in self.css_list:
@@ -148,20 +181,24 @@ class Minify():
 
 # main
 if __name__ == "__main__":
-    pwd, path = main(sys.argv[1:])
+    pwd, path = copy_project(sys.argv[1:])
+
+    # ng-annotation
+    print('Start to ng-annotate angularjs file ...')
+    ng_annotate(pwd)
 
     # directory handle and collect files
-    print('Start to remove %s files ...' % KEEP_PYTHON_FILE[0])
+    print('Start to remove %s files ...' % COMPARE_PYTHON_FILE[0])
     js, css = delete_py_and_collect_jc(pwd)
 
-    #compress files
+    # compress files
     minify = Minify(js, css, path)
     print('Start to compress js files ...')
     minify.compress_js()
     print('Start to compress css files ...')
     minify.compress_css()
 
-    #create log write into README
+    # create log write into README
     readme(pwd)
     print('finished all')
     sys.exit()
