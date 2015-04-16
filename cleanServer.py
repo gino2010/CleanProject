@@ -22,6 +22,8 @@ IS_COMPRESS_CSS = True
 
 # copy project function
 def copy_project(args):
+    print("check environment......")
+    print("check yuicompressor-2.4.8")
     try:
         import yuicompressor
 
@@ -29,8 +31,22 @@ def copy_project(args):
     except ImportError:
         jar_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'yuicompressor-2.4.8.jar')
         if not os.path.isfile(jar_path):
-            print('You need yuicompressor jar or python lib.')
+            print('You need to install yuicompressor jar or python lib first.')
             sys.exit()
+    print("yuicompressor is OK")
+    print("check ng-annotate")
+    command_min = ['npm', '-g', 'list', '|', 'grep', 'ng-annotate']
+    try:
+        op = subprocess.Popen(command_min, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        temp_str = op.communicate()[0]
+        if temp_str == '' or 'ng-annotate@' not in temp_str:
+            print('You need to install npm and ng-annotate first')
+            sys.exit()
+    except:
+        print('You need to install npm and ng-annotate first')
+        sys.exit()
+    print("ng-annotate is OK")
+    print("start to duplicate project")
     if len(args) == 0:
         answer = raw_input('Do you want to deal with current path?(Y/N):')
         if answer.lower().startswith("y"):
